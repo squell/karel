@@ -1,31 +1,35 @@
-mod interface;
-mod model;
-mod tty_view;
-use interface::{MonoRobotWorld, SimpleRobot};
+use karel::{is_on_crab, is_wall_ahead, pick_crab_up, put_crab_down, step, turn_clockwise};
+use static_interface as karel;
 
-fn do_the_robot(mut karel: MonoRobotWorld) {
-    while !karel.is_wall_ahead() {
-        karel.step();
+fn robot_program() {
+    while !is_wall_ahead() {
+        step();
     }
-    karel.turn_clockwise();
-    karel.turn_clockwise();
-    karel.step();
-    karel.step();
-    karel.turn_clockwise();
-    while !karel.is_on_crab() {
-        karel.step();
+    turn_clockwise();
+    turn_clockwise();
+    step();
+    step();
+    turn_clockwise();
+    while !is_on_crab() {
+        step();
     }
-    karel.pick_crab_up();
-    karel.turn_clockwise();
-    karel.turn_clockwise();
-    karel.step();
-    karel.put_crab_down();
+    pick_crab_up();
 
-    karel.turn_clockwise();
+    turn_clockwise();
+    turn_clockwise();
+    step();
+    put_crab_down();
+    turn_clockwise();
+
     loop {
-        karel.step();
+        step();
     }
 }
+
+mod interface;
+mod model;
+mod static_interface;
+mod tty_view;
 
 fn main() {
     let world = model::World::new(10, 10)
@@ -38,5 +42,6 @@ fn main() {
         ..Default::default()
     };
 
-    do_the_robot(MonoRobotWorld::from(world, robot));
+    karel::start(world, robot);
+    robot_program()
 }
