@@ -85,6 +85,7 @@ pub fn new() -> TTYView {
         std::io::stdout(),
         terminal::Clear(terminal::ClearType::All),
         cursor::MoveTo(0,0),
+        cursor::Hide,
     }
     .unwrap();
 
@@ -94,5 +95,15 @@ pub fn new() -> TTYView {
 impl TTYView {
     pub fn draw<'a>(&self, w: &World, bots: impl IntoIterator<Item = &'a Robot>) {
         draw_world(w, bots)
+    }
+}
+
+impl Drop for TTYView {
+    fn drop(&mut self) {
+        crossterm::execute! {
+            std::io::stdout(),
+            crossterm::cursor::Show,
+        }
+        .unwrap()
     }
 }
