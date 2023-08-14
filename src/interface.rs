@@ -56,7 +56,7 @@ impl SimpleRobot for MonoRobotWorld {
 
     fn put_crab_down(&mut self) {
         if self.robot.in_hold == 0 {
-            panic!("Kareltje has no crab shells in his hold!");
+            return;
         } else if self.is_on_crab() {
             panic!("There is already a crab shell here!");
         }
