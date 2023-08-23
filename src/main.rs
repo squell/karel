@@ -1,16 +1,17 @@
-use karel::{is_on_crab, is_wall_ahead, pick_crab_up, put_crab_down, step, turn_clockwise};
-use static_interface as karel;
+use karel::{facing_north, on_crab, pick_crab_up, put_crab_down, step, turn_clockwise, wall_ahead};
 
 fn robot_program() {
-    while !is_wall_ahead() {
+    while !wall_ahead() {
         step();
     }
     turn_clockwise();
     turn_clockwise();
     step();
     step();
-    turn_clockwise();
-    while !is_on_crab() {
+    while !facing_north() {
+        turn_clockwise();
+    }
+    while !on_crab() {
         step();
     }
     pick_crab_up();
@@ -30,6 +31,8 @@ mod interface;
 mod model;
 mod static_interface;
 mod tty_view;
+
+use static_interface as karel;
 
 fn main() {
     let world = model::World::new(10, 10)

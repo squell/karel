@@ -9,8 +9,9 @@ pub trait SimpleRobot {
     fn turn_clockwise(&mut self);
     fn pick_crab_up(&mut self);
     fn put_crab_down(&mut self);
-    fn is_wall_ahead(&self) -> bool;
-    fn is_on_crab(&self) -> bool;
+    fn wall_ahead(&self) -> bool;
+    fn on_crab(&self) -> bool;
+    fn facing_north(&self) -> bool;
 }
 
 pub struct MonoRobotWorld {
@@ -21,7 +22,7 @@ pub struct MonoRobotWorld {
 
 impl SimpleRobot for MonoRobotWorld {
     fn step(&mut self) {
-        if self.is_wall_ahead() {
+        if self.wall_ahead() {
             panic!("Karel crashed into a wall!");
         }
         let (y, x) = self.robot.pos;
@@ -46,7 +47,7 @@ impl SimpleRobot for MonoRobotWorld {
     }
 
     fn pick_crab_up(&mut self) {
-        if !self.is_on_crab() {
+        if !self.on_crab() {
             return;
         }
         self.robot.in_hold += 1;
@@ -57,7 +58,7 @@ impl SimpleRobot for MonoRobotWorld {
     fn put_crab_down(&mut self) {
         if self.robot.in_hold == 0 {
             return;
-        } else if self.is_on_crab() {
+        } else if self.on_crab() {
             panic!("There is already a crab shell here!");
         }
         self.robot.in_hold -= 1;
@@ -65,14 +66,18 @@ impl SimpleRobot for MonoRobotWorld {
         self.update();
     }
 
-    fn is_wall_ahead(&self) -> bool {
+    fn wall_ahead(&self) -> bool {
         self.world
             .walls(self.robot.pos.0, self.robot.pos.1)
             .has(self.robot.dir)
     }
 
-    fn is_on_crab(&self) -> bool {
+    fn on_crab(&self) -> bool {
         self.world.has_shell(self.robot.pos.0, self.robot.pos.1)
+    }
+
+    fn facing_north(&self) -> bool {
+        matches!(self.robot.dir, Direction::North)
     }
 }
 

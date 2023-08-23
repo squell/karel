@@ -25,4 +25,4 @@ macro_rules! forward {
     }
 }
 
-forward! { step, turn_clockwise, pick_crab_up, put_crab_down, is_wall_ahead -> bool, is_on_crab -> bool }
+forward! { step, turn_clockwise, pick_crab_up, put_crab_down, wall_ahead -> bool, on_crab -> bool, facing_north -> bool }
