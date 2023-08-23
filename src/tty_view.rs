@@ -7,13 +7,23 @@ fn draw_world<'a>(w: &World, bots: impl IntoIterator<Item = &'a Robot>) {
 
     let robots: Vec<_> = bots.into_iter().collect();
 
-    fn draw_horizontal_wall(w: &World, y: usize, dir: Direction) {
+    fn draw_walls(w: &World, y: usize, dir: Direction) {
         for x in 0..w.width() {
             let walls = w.walls(y, x);
             if walls.has(dir) {
                 print!("####");
             } else {
-                print!("    ");
+                if walls.has(Direction::West) {
+                    print!("#");
+                } else {
+                    print!(" ");
+                }
+                print!("  ");
+                if walls.has(Direction::East) {
+                    print!("#");
+                } else {
+                    print!(" ");
+                }
             }
         }
         println!();
@@ -29,7 +39,7 @@ fn draw_world<'a>(w: &World, bots: impl IntoIterator<Item = &'a Robot>) {
     }
 
     for y in 0..w.height() {
-        draw_horizontal_wall(w, y, Direction::North);
+        draw_walls(w, y, Direction::North);
         for x in 0..w.width() {
             print!(
                 "{}",
@@ -71,10 +81,10 @@ fn draw_world<'a>(w: &World, bots: impl IntoIterator<Item = &'a Robot>) {
                 }
             );
         }
+        println!();
     }
-    println!();
 
-    draw_horizontal_wall(w, w.height() - 1, Direction::South);
+    draw_walls(w, w.height() - 1, Direction::South);
 }
 
 pub struct TTYView;
