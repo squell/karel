@@ -45,6 +45,5 @@ fn main() {
         ..Default::default()
     };
 
-    let _dropme = karel::start(world, robot);
-    robot_program();
+    karel::run(world, robot, robot_program);
 }

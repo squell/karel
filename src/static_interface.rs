@@ -6,13 +6,13 @@ use std::sync::Mutex;
 
 static KAREL: Mutex<Option<MonoRobotWorld>> = Mutex::new(None);
 
-pub fn start(world: model::World, robot: model::Robot) -> impl Drop {
+pub fn run(world: model::World, robot: model::Robot, mut user_program: impl FnMut()) {
     // this is a hack to ensure that TTYView::Drop is called
-    let handle = tty_view::new();
+    let _restore_cursor = tty_view::new();
 
     *KAREL.lock().unwrap() = Some(MonoRobotWorld::from(world, robot));
 
-    handle
+    user_program()
 }
 
 macro_rules! forward {
