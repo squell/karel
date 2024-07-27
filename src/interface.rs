@@ -2,7 +2,7 @@ use crate::model::{Direction, Robot, World};
 
 use std::time::Duration;
 
-const PAUSE: Duration = Duration::from_millis(250);
+const PAUSE: Duration = Duration::from_millis(100);
 
 pub trait SimpleRobot {
     fn step(&mut self);

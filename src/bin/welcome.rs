@@ -47,8 +47,7 @@ fn ahead_four_steps() {
 }
 
 fn main() {
-    let world = karel::World::new(30, 50)
-        .fenced();
+    let world = karel::World::new(30, 50).fenced();
 
     let robot = karel::Robot {
         pos: (15, 24),

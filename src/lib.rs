@@ -1,4 +1,6 @@
-pub use karel::{facing_north, on_crab, pick_crab_up, put_crab_down, step, turn_clockwise, wall_ahead};
+pub use karel::{
+    facing_north, on_crab, pick_crab_up, put_crab_down, step, turn_clockwise, wall_ahead,
+};
 
 fn robot_program() {
     while !wall_ahead() {
@@ -48,5 +50,5 @@ mod tty_view;
 
 use static_interface as karel;
 
-pub use model::{Direction, Robot, World};
 pub use karel::run;
+pub use model::{Direction, Robot, World};
