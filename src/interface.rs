@@ -1,9 +1,5 @@
 use crate::model::{Direction, Robot, World};
 
-use std::time::Duration;
-
-const PAUSE: Duration = Duration::from_millis(100);
-
 pub trait SimpleRobot {
     fn step(&mut self);
     fn turn_clockwise(&mut self);
@@ -14,10 +10,14 @@ pub trait SimpleRobot {
     fn facing_north(&self) -> bool;
 }
 
+pub trait Display: Send {
+    fn draw(&self, w: &World, bots: &mut dyn Iterator<Item = &Robot>);
+}
+
 pub struct MonoRobotWorld {
     pub world: World,
     pub robot: Robot,
-    tty: crate::tty_view::TTYView,
+    pub output: Box<dyn Display>,
 }
 
 impl SimpleRobot for MonoRobotWorld {
@@ -82,25 +82,8 @@ impl SimpleRobot for MonoRobotWorld {
 }
 
 impl MonoRobotWorld {
-    pub fn from(world: World, robot: Robot) -> MonoRobotWorld {
-        let this = MonoRobotWorld {
-            world,
-            robot,
-            tty: crate::tty_view::new(),
-        };
-        this.update();
-
-        this
-    }
-
     fn update(&self) {
-        crossterm::execute! {
-            std::io::stdout(),
-            crossterm::cursor::MoveTo(0,0),
-        }
-        .unwrap();
-
-        self.tty.draw(&self.world, [&self.robot]);
-        std::thread::sleep(PAUSE);
+        self.output
+            .draw(&self.world, &mut [&self.robot].into_iter());
     }
 }

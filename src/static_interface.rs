@@ -7,21 +7,33 @@ use std::sync::Mutex;
 static KAREL: Mutex<Option<MonoRobotWorld>> = Mutex::new(None);
 
 pub fn run(world: model::World, robot: model::Robot, mut user_program: impl FnMut()) {
-    // this is a hack to ensure that TTYView::Drop is called
-    let _restore_cursor = tty_view::new();
+    // to ensure that the TTY is always cleaned up (even if user_program panics)
+    struct ClearMutex;
+    impl Drop for ClearMutex {
+        fn drop(&mut self) {
+            *KAREL.lock().unwrap() = None;
+        }
+    }
 
-    *KAREL.lock().unwrap() = Some(MonoRobotWorld::from(world, robot));
+    let output = Box::new(tty_view::new());
+
+    let _restore = ClearMutex;
+    *KAREL.lock().unwrap() = Some(MonoRobotWorld {
+        world,
+        robot,
+        output,
+    });
 
     user_program()
 }
 
 macro_rules! forward {
     ($($method:ident $(-> $type:ty)?),*) => {
-	$(
-	    pub fn $method() $(-> $type)? {
-		KAREL.lock().unwrap().as_mut().unwrap().$method()
-	    }
-	)*
+        $(
+            pub fn $method() $(-> $type)? {
+                KAREL.lock().unwrap().as_mut().unwrap().$method()
+            }
+        )*
     }
 }
 

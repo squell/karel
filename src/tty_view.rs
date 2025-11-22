@@ -1,8 +1,13 @@
+use crate::interface::Display;
 use crate::model::{Direction, Robot, World};
 
 /* ╋ ━ ┏ ┗ ┓ ┛ ┳ ┻ ┫ ┣ */
 
-fn draw_world<'a>(w: &World, bots: impl IntoIterator<Item = &'a Robot>) {
+use std::time::Duration;
+
+const PAUSE: Duration = Duration::from_millis(100);
+
+fn draw_world<'a>(w: &World, bots: impl Iterator<Item = &'a Robot>) {
     use nu_ansi_term::{Color, Style};
 
     let robots: Vec<_> = bots.into_iter().collect();
@@ -102,9 +107,17 @@ pub fn new() -> TTYView {
     TTYView
 }
 
-impl TTYView {
-    pub fn draw<'a>(&self, w: &World, bots: impl IntoIterator<Item = &'a Robot>) {
-        draw_world(w, bots)
+impl Display for TTYView {
+    fn draw(&self, w: &World, bots: &mut dyn Iterator<Item = &Robot>) {
+        crossterm::execute! {
+            std::io::stdout(),
+            crossterm::cursor::MoveTo(0,0),
+        }
+        .unwrap();
+
+        draw_world(w, bots);
+
+        std::thread::sleep(PAUSE);
     }
 }
 
