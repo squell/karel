@@ -3,7 +3,24 @@
 use karel::{facing_north, on_crab, pick_crab_up, put_crab_down, step, turn_clockwise, wall_ahead};
 
 fn robot_program() {
-    todo!();
+    while !facing_north() {
+        turn_clockwise();
+    }
+
+    while !wall_ahead() {
+        step();
+    }
+
+    for _ in 0..3 {
+        turn_clockwise();
+    }
+
+    while !wall_ahead() {
+        step();
+    }
+
+    turn_clockwise();
+    turn_clockwise();
 }
 
 fn main() {

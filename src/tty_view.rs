@@ -94,11 +94,12 @@ fn draw_world<'a>(w: &World, bots: impl Iterator<Item = &'a Robot>) {
 
 pub struct TTYView;
 
-pub fn new() -> TTYView {
+pub fn new(cols: u16, rows: u16) -> TTYView {
     use crossterm::{cursor, terminal};
     crossterm::execute! {
         std::io::stdout(),
         terminal::Clear(terminal::ClearType::All),
+        terminal::SetSize(cols, rows),
         cursor::MoveTo(0,0),
         cursor::Hide,
     }

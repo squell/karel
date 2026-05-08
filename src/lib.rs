@@ -43,6 +43,8 @@ pub fn demo() {
     karel::run(world, robot, robot_program);
 }
 
+#[cfg(feature = "ggez")]
+mod ggez_view;
 mod interface;
 mod model;
 mod static_interface;
