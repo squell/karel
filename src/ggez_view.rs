@@ -14,7 +14,7 @@ use std::{
 };
 
 const PAUSE: Duration = Duration::from_millis(100);
-const SCALE: f32 = 50.0;
+const SCALE: f32 = 20.0;
 
 pub struct GgezView {
     sender: Option<Sender<(World, Vec<Robot>)>>,
@@ -116,7 +116,7 @@ impl Karel {
             DrawMode::fill(),
             Rect::new(0.0, 0.05 * SCALE, 0.1 * SCALE, 0.9 * SCALE),
             0.1 * SCALE,
-            Color::CYAN,
+            Color::BLACK,
         )
         .unwrap();
 
@@ -153,7 +153,8 @@ impl EventHandler for Karel {
     }
 
     fn draw(&mut self, ctx: &mut ggez::Context) -> Result<(), ggez::GameError> {
-        let mut canvas = graphics::Canvas::from_frame(ctx, Color::BLACK);
+        let mut canvas = graphics::Canvas::from_frame(ctx, Color::WHITE);
+        let gray = Color::from_rgb(0xD0, 0xD0, 0xD0);
 
         for x in 1..self.world.width() {
             let line = graphics::Mesh::new_line(
@@ -163,7 +164,7 @@ impl EventHandler for Karel {
                     [0.0, self.world.height() as f32 * SCALE + SCALE],
                 ],
                 1.0,
-                Color::WHITE,
+                gray,
             )
             .unwrap();
 
@@ -175,7 +176,7 @@ impl EventHandler for Karel {
                 ctx,
                 &[[1.0, 0.0], [self.world.width() as f32 * SCALE + SCALE, 0.0]],
                 1.0,
-                Color::WHITE,
+                gray,
             )
             .unwrap();
 
