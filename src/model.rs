@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct World {
     width: usize,
     horizontal_walls: Box<[bool]>,
@@ -95,10 +95,10 @@ impl World {
                 }
             }
             Direction::West => {
-                return self.set_wall((y, x - (length - 1)), Direction::East, length, value)
+                return self.set_wall((y, x - (length - 1)), Direction::East, length, value);
             }
             Direction::North => {
-                return self.set_wall((y - (length - 1), x), Direction::South, length, value)
+                return self.set_wall((y - (length - 1), x), Direction::South, length, value);
             }
         }
 

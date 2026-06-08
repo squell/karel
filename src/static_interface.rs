@@ -6,7 +6,11 @@ use std::sync::Mutex;
 
 static KAREL: Mutex<Option<MonoRobotWorld>> = Mutex::new(None);
 
-pub fn run(world: model::World, robot: model::Robot, mut user_program: impl FnMut()) {
+pub fn run(
+    world: model::World,
+    robot: model::Robot,
+    mut user_program: impl FnMut() + Send + 'static,
+) {
     // to ensure that the TTY is always cleaned up (even if user_program panics)
     struct ClearMutex;
     impl Drop for ClearMutex {
@@ -15,7 +19,10 @@ pub fn run(world: model::World, robot: model::Robot, mut user_program: impl FnMu
         }
     }
 
-    let output = Box::new(tty_view::new());
+    let output = Box::new(tty_view::new(
+        world.width() as u16 * 4 + 1,
+        world.height() as u16 * 2 + 2,
+    ));
 
     let _restore = ClearMutex;
     *KAREL.lock().unwrap() = Some(MonoRobotWorld {
