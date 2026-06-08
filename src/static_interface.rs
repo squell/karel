@@ -1,7 +1,12 @@
+#[cfg(feature = "ggez")]
+use crate::ggez_view::{GgezView, Karel};
+#[cfg(not(feature = "ggez"))]
+use crate::tty_view;
 use crate::{
     interface::{MonoRobotWorld, SimpleRobot},
-    model, tty_view,
+    model,
 };
+
 use std::sync::Mutex;
 
 static KAREL: Mutex<Option<MonoRobotWorld>> = Mutex::new(None);
@@ -19,19 +24,27 @@ pub fn run(
         }
     }
 
-    let output = Box::new(tty_view::new(
-        world.width() as u16 * 4 + 1,
-        world.height() as u16 * 2 + 2,
-    ));
+    #[cfg(not(feature = "ggez"))]
+    let output = tty_view::new(world.width() as u16 * 4 + 1, world.height() as u16 * 2 + 2);
 
-    let _restore = ClearMutex;
-    *KAREL.lock().unwrap() = Some(MonoRobotWorld {
-        world,
-        robot,
-        output,
+    #[cfg(feature = "ggez")]
+    let (output, receiver) = GgezView::spawn();
+
+    let handle = std::thread::spawn(move || {
+        let _restore = ClearMutex;
+        *KAREL.lock().unwrap() = Some(MonoRobotWorld {
+            world,
+            robot,
+            output: Box::new(output),
+        });
+
+        user_program()
     });
 
-    user_program()
+    #[cfg(feature = "ggez")]
+    Karel::run(receiver);
+
+    handle.join().unwrap();
 }
 
 macro_rules! forward {
