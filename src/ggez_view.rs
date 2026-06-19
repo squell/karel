@@ -69,19 +69,21 @@ impl Karel {
             return;
         };
 
-        let mut window = WindowMode::default();
-        window.width = world.width() as f32 * SCALE;
-        window.height = world.height() as f32 * SCALE;
+        let window = WindowMode {
+            width: world.width() as f32 * SCALE,
+            height: world.height() as f32 * SCALE,
+            ..Default::default()
+        };
 
         // Make a Context.
-        let (mut ctx, event_loop) = ContextBuilder::new("Karel", "Trifecta Tech Foundation")
+        let (ctx, event_loop) = ContextBuilder::new("Karel", "Trifecta Tech Foundation")
             .window_mode(window)
             .build()
             .expect("aieee, could not create ggez context!");
 
         const ROBO_SCALE: f32 = SCALE * 0.9;
         let robo_mesh = graphics::Mesh::new_polygon(
-            &mut ctx,
+            &ctx,
             DrawMode::fill(),
             &[
                 Point2 {
@@ -103,7 +105,7 @@ impl Karel {
 
         let crab_bb = Rect::new(0.1 * SCALE, 0.1 * SCALE, 0.8 * SCALE, 0.8 * SCALE);
         let crab_mesh = graphics::Mesh::new_rounded_rectangle(
-            &mut ctx,
+            &ctx,
             DrawMode::fill(),
             crab_bb,
             0.25 * SCALE,
@@ -112,7 +114,7 @@ impl Karel {
         .unwrap();
 
         let wall_mesh = graphics::Mesh::new_rounded_rectangle(
-            &mut ctx,
+            &ctx,
             DrawMode::fill(),
             Rect::new(0.0, 0.05 * SCALE, 0.1 * SCALE, 0.9 * SCALE),
             0.1 * SCALE,
